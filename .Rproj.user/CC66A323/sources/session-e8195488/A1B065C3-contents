@@ -5,8 +5,9 @@ library(here)
 cars_data <- read.csv(here("cleaned_data.csv"))
 cars_data <- cars_data |> select(-c("X"))
 
-plot_counts <- function(data, variable, color = "purple", rotate = 0){
-  data |> group_by(data[variable]) |>
+plot_counts <- function(data, variable, color = "purple", 
+                        rotate = 0, add_unif = F){
+  my_plot <- data |> group_by(data[variable]) |>
     ggplot() +
     geom_bar(aes_string(x = variable), fill = color,
              alpha = 0.5, ) +
@@ -15,9 +16,23 @@ plot_counts <- function(data, variable, color = "purple", rotate = 0){
          title = paste("Counts of", variable)) +
     theme(plot.title = element_text(hjust = 0.5),
           axis.text.x = element_text(angle = rotate))
+  if(add_unif){
+    y_int = nrow(data)/length(unique(data[,variable]))
+    my_plot + geom_hline(yintercept = y_int, linetype = "dashed",
+                         color = color)
+  }
+  else{
+    my_plot
+  }
 }
 
-
+get_proportions <- function(data, variable){
+  data |> group_by(data[variable]) |>
+    summarise(n = n()) |>
+    mutate(proportion = 100*n/sum(n)) |>
+    select(-c(n))
+}
+get_proportions(cars_data, "state")
 
 
 
@@ -52,3 +67,22 @@ scatterplot_against_responses <- function(data, variable, color = "purple"){
 scatterplot_against_responses(cars_data, "year_produced")
 scatterplot_against_responses(cars_data, "odometer_value")
 
+
+
+
+
+cars_data |> select("manufacturer_name", price_usd, log_price) |>
+  pivot_longer(price_usd:log_price, names_to = "price_type", 
+               values_to = "price") |> ggplot() + 
+  geom_boxplot(aes(x = reorder(manufacturer_name, price), y = price), fill = "blue",
+               alpha = 0.3) + 
+  facet_wrap(~price_type, ncol = 2, scales = "free",
+             labeller = as_labeller(c(log_price = "log(Price USD)",
+                                      price_usd = "Price USD")) ) + 
+  coord_flip() + 
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "Vehicle Manufacturer", y = "Price USD", 
+       title = "Observed Price in USD by Manufacturer")
+
+  
