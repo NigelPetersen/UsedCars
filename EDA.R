@@ -17,10 +17,6 @@ plot_counts <- function(data, variable, color = "purple", rotate = 0){
           axis.text.x = element_text(angle = rotate))
 }
 
-
-
-
-
 boxplot_against_responses <- function(data, variable, color = "purple"){
   data |> select(variable, price_usd, log_price) |>
     pivot_longer(price_usd:log_price, names_to = "price_type", 
@@ -34,7 +30,6 @@ boxplot_against_responses <- function(data, variable, color = "purple"){
     theme_bw() + 
     theme(plot.title = element_text(hjust = 0.5))
 }
-
 
 scatterplot_against_responses <- function(data, variable, color = "purple"){
   data |> select(variable, price_usd, log_price) |>
@@ -51,4 +46,3 @@ scatterplot_against_responses <- function(data, variable, color = "purple"){
 
 scatterplot_against_responses(cars_data, "year_produced")
 scatterplot_against_responses(cars_data, "odometer_value")
-
