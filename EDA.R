@@ -71,19 +71,46 @@ cars_data |> group_by(manufacturer_name) |>
 
 
 summary_table <- function(data, variable, highest_first = T){
-  data |> group_by(!!sym(variable)) |>
+  tab <- data |> group_by(!!sym(variable)) |>
     summarise(avg_price = mean(price_usd), avg_year = round(mean(year_produced)),
               avg_odom = mean(odometer_value)) |>
-    arrange((-1)^highest_first * avg_price) |>
-    print(n = nrow(data))
+    arrange((-1)^highest_first * avg_price)
+  
+  tab["prop"] <- get_proportions(data, variable)[,2]
+  
+  tab |> print(n = nrow(cars_data))
 }
 
+summary_table(cars_data, "manufacturer_name")
 
 
+
+cars_data |> mutate(transmission = recode(transmission, "mechanical" = "manual")) |>
+  group_by(color) |>
+  ggplot() +
+  geom_boxplot(aes(x = color, y = log_price, fill = transmission)) +
+  theme_bw() + 
+  labs(x = "Vehicle Color", y = "log(Price USD)", 
+       title = "log(Price USD) Across Vehicle Colors by Transmission") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+cars_data |> mutate(transmission = recode(transmission, "mechanical" = "manual")) |>
+  group_by(manufacturer_name) |>
+  ggplot() +
+  geom_boxplot(aes(x = manufacturer_name, y = price, fill = transmission)) + 
+  theme_bw() +
+  labs(x = "Vehicle Manufacturer", y = "log(Price USD)",
+       title = "log(Price USD) against Manufacturer across Transmission") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  coord_flip()
+  
 
 ##################################################################################
 ############################# FUNCTION CALLS #####################################
 ##################################################################################
+
 plot_counts(cars_data, "color")
 
 boxplot_against_responses(cars_data, "body_type")
