@@ -26,9 +26,6 @@ plot_counts <- function(data, variable, color = "purple",
   }
 }
 
-plot_counts(cars_data, "color")
-
-
 
 get_proportions <- function(data, variable){
   data |> group_by(!!sym(variable)) |>
@@ -36,8 +33,6 @@ get_proportions <- function(data, variable){
     mutate(proportion = 100*n/sum(n)) |>
     select(-c(n))
 }
-get_proportions(cars_data, "state")
-
 
 
 boxplot_against_responses <- function(data, variable, color = "purple"){
@@ -54,9 +49,6 @@ boxplot_against_responses <- function(data, variable, color = "purple"){
     theme(plot.title = element_text(hjust = 0.5))
 }
 
-boxplot_against_responses(cars_data, "body_type")
-
-
 
 scatterplot_against_responses <- function(data, variable, color = "purple"){
   data |> select(variable, price_usd, log_price) |>
@@ -71,9 +63,6 @@ scatterplot_against_responses <- function(data, variable, color = "purple"){
     theme(plot.title = element_text(hjust = 0.5))
 }
 
-scatterplot_against_responses(cars_data, "year_produced")
-scatterplot_against_responses(cars_data, "odometer_value")
-
 
 cars_data |> group_by(manufacturer_name) |> 
   summarise(avg_price = mean(price_usd), avg_year_prod = round(mean(year_produced)),
@@ -81,9 +70,28 @@ cars_data |> group_by(manufacturer_name) |>
   arrange(-avg_price) |> print(n=50)
 
 
+summary_table <- function(data, variable, highest_first = T){
+  data |> group_by(!!sym(variable)) |>
+    summarise(avg_price = mean(price_usd), avg_year = round(mean(year_produced)),
+              avg_odom = mean(odometer_value)) |>
+    arrange((-1)^highest_first * avg_price) |>
+    print(n = nrow(data))
+}
 
 
 
 
+##################################################################################
+############################# FUNCTION CALLS #####################################
+##################################################################################
+plot_counts(cars_data, "color")
+
+boxplot_against_responses(cars_data, "body_type")
+
+scatterplot_against_responses(cars_data, "year_produced")
+scatterplot_against_responses(cars_data, "odometer_value")
+
+summary_table(cars_data, "manufacturer_name")
+get_proportions(cars_data, "state")
 
   
