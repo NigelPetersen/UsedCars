@@ -7,9 +7,9 @@ cars_data <- cars_data |> select(-c("X"))
 
 plot_counts <- function(data, variable, color = "purple", 
                         rotate = 0, add_unif = F){
-  my_plot <- data |> group_by(data[variable]) |>
+  my_plot <- data |> group_by(!!sym(variable)) |>
     ggplot() +
-    geom_bar(aes_string(x = variable), fill = color,
+    geom_bar(aes(x = !!sym(variable)), fill = color,
              alpha = 0.5, ) +
     theme_bw() + 
     labs(x = variable, y = "Count", 
@@ -26,8 +26,12 @@ plot_counts <- function(data, variable, color = "purple",
   }
 }
 
+plot_counts(cars_data, "color")
+
+
+
 get_proportions <- function(data, variable){
-  data |> group_by(data[variable]) |>
+  data |> group_by(!!sym(variable)) |>
     summarise(n = n()) |>
     mutate(proportion = 100*n/sum(n)) |>
     select(-c(n))
@@ -39,23 +43,26 @@ get_proportions(cars_data, "state")
 boxplot_against_responses <- function(data, variable, color = "purple"){
   data |> select(variable, price_usd, log_price) |>
     pivot_longer(price_usd:log_price, names_to = "price_type", 
-                 values_to = "price") |> ggplot(aes(y = price)) + 
-    geom_boxplot(aes_string(x = variable), fill = color,
+                 values_to = "price") |> ggplot() + 
+    geom_boxplot(aes(x = reorder(!!sym(variable), price), y = price), fill = color,
                  alpha = 0.3) + 
     facet_wrap(~price_type, ncol = 2, scales = "free",
-      labeller = as_labeller(c(log_price = "log(Price USD)",
-                              price_usd = "Price USD")) ) + 
+               labeller = as_labeller(c(log_price = "log(Price USD)",
+                                        price_usd = "Price USD")) ) + 
     coord_flip() + 
     theme_bw() + 
     theme(plot.title = element_text(hjust = 0.5))
 }
+
+boxplot_against_responses(cars_data, "body_type")
+
 
 
 scatterplot_against_responses <- function(data, variable, color = "purple"){
   data |> select(variable, price_usd, log_price) |>
     pivot_longer(price_usd:log_price, names_to = "price_type", 
                  values_to = "price") |> ggplot(aes(y = price)) + 
-    geom_point(aes_string(x = variable), fill = color,
+    geom_point(aes(x = !!sym(variable)), fill = color,
                  alpha = 0.3) + 
     facet_wrap(~price_type, ncol = 2, scales = "free",
                labeller = as_labeller(c(log_price = "log(Price USD)",
@@ -68,21 +75,15 @@ scatterplot_against_responses(cars_data, "year_produced")
 scatterplot_against_responses(cars_data, "odometer_value")
 
 
+cars_data |> group_by(manufacturer_name) |> 
+  summarise(avg_price = mean(price_usd), avg_year_prod = round(mean(year_produced)),
+            avg_odom = mean(odometer_value)) |> 
+  arrange(-avg_price) |> print(n=50)
 
 
 
-cars_data |> select("manufacturer_name", price_usd, log_price) |>
-  pivot_longer(price_usd:log_price, names_to = "price_type", 
-               values_to = "price") |> ggplot() + 
-  geom_boxplot(aes(x = reorder(manufacturer_name, price), y = price), fill = "blue",
-               alpha = 0.3) + 
-  facet_wrap(~price_type, ncol = 2, scales = "free",
-             labeller = as_labeller(c(log_price = "log(Price USD)",
-                                      price_usd = "Price USD")) ) + 
-  coord_flip() + 
-  theme_bw() + 
-  theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(x = "Vehicle Manufacturer", y = "Price USD", 
-       title = "Observed Price in USD by Manufacturer")
+
+
+
 
   
