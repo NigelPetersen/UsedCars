@@ -81,9 +81,6 @@ summary_table <- function(data, variable, highest_first = T){
   tab |> print(n = nrow(cars_data))
 }
 
-summary_table(cars_data, "manufacturer_name")
-
-
 
 cars_data |> mutate(transmission = recode(transmission, "mechanical" = "manual")) |>
   group_by(color) |>
@@ -120,5 +117,6 @@ scatterplot_against_responses(cars_data, "odometer_value")
 
 summary_table(cars_data, "manufacturer_name")
 get_proportions(cars_data, "state")
+summary_table(cars_data, "manufacturer_name")
 
   
