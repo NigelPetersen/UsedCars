@@ -1,0 +1,10 @@
+library(tidyverse)
+library(faraway)
+data(prostate)
+
+prostate |> group_by(gleason) |> summarise(Count = n())
+
+prostate |> mutate(gleason = as.factor(gleason)) |> ggplot() + 
+  geom_boxplot(aes(x = gleason, y = lpsa)) + 
+  labs(x = "Gleason Level", y = "LPSA") +
+  theme_bw()

@@ -1,27 +1,27 @@
 {
-    "id": "A1B065C3",
+    "id": "56694C3F",
     "path": "~/GitHub/UsedCars/EDA.R",
     "project_path": "EDA.R",
     "type": "r_source",
-    "hash": "2308211627",
+    "hash": "4245307184",
     "contents": "",
     "dirty": false,
-    "created": 1694013797097.0,
+    "created": 1716750667026.0,
     "source_on_save": false,
-    "relative_order": 1,
+    "relative_order": 3,
     "properties": {
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "86,0",
-        "scrollLine": "68"
+        "cursorPosition": "195,0",
+        "scrollLine": "163"
     },
     "folds": "",
-    "lastKnownWriteTime": 1694032511,
+    "lastKnownWriteTime": 1716908649,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1694032511499,
+    "last_content_update": 1716908650031,
     "read_only": false,
     "read_only_alternatives": []
 }
